@@ -320,37 +320,37 @@ module.exports = grammar({
         "]"
       ),
 
-    shell_command: ($) =>
-      seq(
-        repeat($._comment_line),
-        $.shell_fragment,
-        repeat(
-          seq(
-            alias($.required_line_continuation, $.line_continuation),
-            repeat($._comment_line),
-            $.shell_fragment
-          )
-        )
-      ),
+    shell_command: ($) => token.immediate(/(?:\\\n|[^\n])+/),
+    //   seq(
+    //     repeat($._comment_line),
+    //     $.shell_fragment,
+    //     repeat(
+    //       seq(
+    //         alias($.required_line_continuation, $.line_continuation),
+    //         repeat($._comment_line),
+    //         $.shell_fragment
+    //       )
+    //     )
+    //   ),
 
-    shell_fragment: ($) => repeat1(
-      choice(
-        // A shell fragment is broken into the same tokens as other
-        // constructs because the lexer prefers the longer tokens
-        // when it has a choice. The example below shows the tokenization
-        // of the --mount parameter.
-        //
-        //   RUN --mount=foo=bar,baz=42 ls --all
-        //       ^^     ^   ^   ^   ^
-        //         ^^^^^ ^^^ ^^^ ^^^ ^^
-        //       |--------param-------|
-        //                              |--shell_command--|
-        //
-        /[,=-]/,
-        /[^\\\[\n#\s,=-][^\\\n]*/,
-        /\\[^\n,=-]/
-      )
-    ),
+    // shell_fragment: ($) => repeat1(
+    //   choice(
+    //     // A shell fragment is broken into the same tokens as other
+    //     // constructs because the lexer prefers the longer tokens
+    //     // when it has a choice. The example below shows the tokenization
+    //     // of the --mount parameter.
+    //     //
+    //     //   RUN --mount=foo=bar,baz=42 ls --all
+    //     //       ^^     ^   ^   ^   ^
+    //     //         ^^^^^ ^^^ ^^^ ^^^ ^^
+    //     //       |--------param-------|
+    //     //                              |--shell_command--|
+    //     //
+    //     /[,=-]/,
+    //     /[^\\\[\n#\s,=-][^\\\n]*/,
+    //     /\\[^\n,=-]/
+    //   )
+    // ),
 
     line_continuation: ($) => "\\\n",
     required_line_continuation: ($) => "\\\n",
