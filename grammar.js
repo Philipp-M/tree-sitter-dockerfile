@@ -2,6 +2,11 @@ module.exports = grammar({
   name: "dockerfile",
 
   extras: ($) => [/\s+/, $.line_continuation],
+  // conflicts: $ => [
+  //   // [$.run_instruction],
+  //   // [$.shell_command],
+  //   [$.string_array, $.shell_command]
+  // ],
 
   rules: {
     source_file: ($) => repeat(seq(choice($._instruction, $.comment), "\n")),
@@ -320,7 +325,10 @@ module.exports = grammar({
         "]"
       ),
 
-    shell_command: ($) => token.immediate(/(?:\\\n|[^\n])+/),
+    // shell_command: ($) => token(prec.dynamic(-1,/(?:\\\n|[^\n])+/)),
+    shell_command: ($) => token(prec(-1,/(?:\\\n|[^\n])+/)),
+    // shell_command: ($) => token(/.*/),
+    // shell_command_dup: ($) => prec.dynamic(0, token(/(?:\\\n|[^\n])+/)),
     //   seq(
     //     repeat($._comment_line),
     //     $.shell_fragment,
