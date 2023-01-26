@@ -1,0 +1,5 @@
+RUN [ "test" ]
+RUN --mount=type=secret,id=aws,target=/root/.aws/credentials \
+    --security=insecure  apt update
+RUN mkdir "test"
+RUN [ "$GID" != 0 ] && (getent group "$GID" || groupadd -g "$GID" unity); exit 0
